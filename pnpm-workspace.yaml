@@ -1,6 +1,9 @@
 packages:
   - "."
 
+# Flat node_modules so the standalone build has no symlinks and can ship inside the npm package.
+nodeLinker: hoisted
+
 allowBuilds:
   "@openuidev/lang-core": false
   esbuild: true

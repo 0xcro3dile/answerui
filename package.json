@@ -32,7 +32,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "spec": "openui --no-telemetry generate src/lib/library.ts --spec > src/generated/spec.json"
+    "spec": "openui --no-telemetry generate src/lib/library.ts --spec > src/generated/spec.json",
+    "package": "node scripts/package.mjs",
+    "test:smoke": "node scripts/smoke-test.mjs"
   },
   "dependencies": {
     "@openuidev/lang-core": "0.3.1",
