@@ -1,0 +1,21 @@
+name: Bug report
+description: Something doesn't work
+labels: [bug]
+body:
+  - type: textarea
+    attributes:
+      label: What happened
+      description: Steps, the prompt you used, and what you expected.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Provider and model
+      placeholder: e.g. Ollama qwen3:8b, OpenAI gpt-5.2
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: AnswerUI version
+    validations:
+      required: true
