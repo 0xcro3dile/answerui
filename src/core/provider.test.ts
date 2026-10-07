@@ -8,10 +8,20 @@ const reachable =
     urls.includes(url);
 
 describe("resolveProvider", () => {
-  it("uses OpenAI when only a key is set", async () => {
+  it("uses OpenAI and its default model when only a key is set", async () => {
     const provider = await resolveProvider({ OPENAI_API_KEY: "sk-test" }, nothingReachable);
 
-    expect(provider).toEqual({ baseURL: "https://api.openai.com/v1", apiKey: "sk-test" });
+    expect(provider).toEqual({
+      baseURL: "https://api.openai.com/v1",
+      apiKey: "sk-test",
+      model: "gpt-5.2",
+    });
+  });
+
+  it("prefers the configured model over OpenAI's default", async () => {
+    const env = { OPENAI_API_KEY: "sk-test", OPENAI_MODEL: "gpt-6" };
+
+    expect((await resolveProvider(env, nothingReachable))?.model).toBe("gpt-6");
   });
 
   it("uses the configured base URL and model with the key", async () => {
@@ -59,6 +69,10 @@ describe("resolveProvider", () => {
     );
 
     expect(provider?.baseURL).toBe("http://0.0.0.0:11434/v1");
+  });
+
+  it("ignores an OLLAMA_HOST it can't parse", async () => {
+    expect(await resolveProvider({ OLLAMA_HOST: "http://" }, reachable())).toBeNull();
   });
 
   it("treats empty values as unset", async () => {

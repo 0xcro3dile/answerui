@@ -23,6 +23,7 @@ export default defineConfig({
       env: {
         OPENAI_API_KEY: "test-key",
         OPENAI_BASE_URL: `http://127.0.0.1:${providerPort}/v1`,
+        OPENAI_MODEL: "fake-small",
         XDG_CONFIG_HOME: "test-results/config",
       },
       url: `http://127.0.0.1:${appPort}`,

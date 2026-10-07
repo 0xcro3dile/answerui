@@ -4,6 +4,8 @@ import { GET as models } from "@/app/api/models/route";
 import { systemPrompt } from "@/core/prompt";
 import { FAKE_MODELS, REJECTED_KEY, fixture, startFakeOpenAI } from "./fake-openai";
 
+const APP = "http://127.0.0.1:3210";
+
 let fake: Awaited<ReturnType<typeof startFakeOpenAI>>;
 
 beforeAll(async () => {
@@ -18,6 +20,7 @@ afterEach(() => {
 function useFakeProvider(env: Record<string, string> = {}) {
   vi.stubEnv("OPENAI_API_KEY", "test-key");
   vi.stubEnv("OPENAI_BASE_URL", fake.url);
+  vi.stubEnv("OPENAI_MODEL", "fake-small");
   for (const [key, value] of Object.entries(env)) vi.stubEnv(key, value);
 }
 
@@ -27,10 +30,25 @@ function useNoProvider() {
   vi.stubEnv("OLLAMA_HOST", "127.0.0.1:9");
 }
 
-function ask(question: string, model?: string) {
-  const body = { model, messages: [{ role: "user", content: question }] };
-  return chat(new Request("http://app/api/chat", { method: "POST", body: JSON.stringify(body) }));
+type RequestOptions = { url?: string; headers?: Record<string, string> };
+
+function chatRequest(body: unknown, { url = `${APP}/api/chat`, headers }: RequestOptions = {}) {
+  return new Request(url, {
+    method: "POST",
+    headers: { "content-type": "application/json", ...headers },
+    body: typeof body === "string" ? body : JSON.stringify(body),
+  });
 }
+
+const question = (content: string, model?: string) => ({
+  model,
+  messages: [{ role: "user", content }],
+});
+
+const ask = (content: string, model?: string) => chat(chatRequest(question(content, model)));
+
+const listModels = ({ url = `${APP}/api/models`, headers }: RequestOptions = {}) =>
+  models(new Request(url, { headers }));
 
 async function answerText(response: Response): Promise<string> {
   const lines = (await response.text()).split("\n").filter(Boolean);
@@ -57,7 +75,7 @@ describe("POST /api/chat", () => {
   });
 
   it("uses the model the user picked", async () => {
-    useFakeProvider({ OPENAI_MODEL: "fake-small" });
+    useFakeProvider();
 
     await (await ask("Hi", "fake-large")).text();
 
@@ -72,39 +90,63 @@ describe("POST /api/chat", () => {
     expect(fake.requests[0].model).toBe("fake-large");
   });
 
-  it("falls back to the first available model when none is configured", async () => {
-    useFakeProvider();
+  it("asks for a model when none is picked or configured", async () => {
+    useFakeProvider({ OPENAI_MODEL: "" });
 
-    await (await ask("Hi")).text();
+    const response = await ask("Hi");
 
-    expect(fake.requests[0].model).toBe(FAKE_MODELS[0]);
+    expect(response.status).toBe(400);
+    expect((await response.json()).error).toMatch(/model/i);
+    expect(fake.requests).toHaveLength(0);
   });
 
   it("rejects a request without messages", async () => {
     useFakeProvider();
 
-    const response = await chat(new Request("http://app/api/chat", { method: "POST", body: "{" }));
+    const response = await chat(chatRequest("{"));
 
     expect(response.status).toBe(400);
     expect(fake.requests).toHaveLength(0);
+  });
+
+  it("rejects an empty conversation", async () => {
+    useFakeProvider();
+
+    const response = await chat(chatRequest({ messages: [] }));
+
+    expect(response.status).toBe(400);
   });
 
   it("explains how to set up a provider when none is available", async () => {
     useNoProvider();
 
     const response = await ask("Hi");
+    const { error } = await response.json();
 
     expect(response.status).toBe(503);
-    expect((await response.json()).error).toMatch(/OPENAI_API_KEY.*Ollama/);
+    expect(error).toMatch(/answerui --setup/);
+    expect(error).toMatch(/OPENAI_API_KEY/);
+    expect(error).toMatch(/Ollama/);
   });
 
-  it("passes the provider's error and status through", async () => {
+  it("names the provider when it rejects the request", async () => {
     useFakeProvider({ OPENAI_API_KEY: REJECTED_KEY });
 
     const response = await ask("Hi");
+    const { error } = await response.json();
 
     expect(response.status).toBe(401);
-    expect((await response.json()).error).toMatch(/Incorrect API key/);
+    expect(error).toContain(new URL(fake.url).host);
+    expect(error).toMatch(/Incorrect API key/);
+  });
+
+  it("explains when the provider can't be reached", async () => {
+    useFakeProvider({ OPENAI_BASE_URL: "http://127.0.0.1:9/v1" });
+
+    const response = await ask("Hi");
+
+    expect(response.status).toBe(502);
+    expect((await response.json()).error).toMatch(/Couldn't reach http:\/\/127\.0\.0\.1:9\/v1/);
   });
 });
 
@@ -112,23 +154,85 @@ describe("GET /api/models", () => {
   it("lists the provider's models with the configured one selected", async () => {
     useFakeProvider({ OPENAI_MODEL: "fake-large" });
 
-    const response = await models();
+    const response = await listModels();
 
     expect(await response.json()).toEqual({ models: FAKE_MODELS, selected: "fake-large" });
   });
 
-  it("selects the first model when none is configured", async () => {
-    useFakeProvider();
+  it("leaves the choice to the user when no model is configured", async () => {
+    useFakeProvider({ OPENAI_MODEL: "" });
 
-    expect((await (await models()).json()).selected).toBe(FAKE_MODELS[0]);
+    expect((await (await listModels()).json()).selected).toBeNull();
   });
 
   it("reports that setup is needed when no provider is available", async () => {
     useNoProvider();
 
-    const response = await models();
+    const response = await listModels();
 
     expect(response.status).toBe(503);
     expect((await response.json()).error).toMatch(/OPENAI_API_KEY/);
+  });
+});
+
+describe("requests from outside the app", () => {
+  it("are refused for hosts the app doesn't serve, which blocks DNS rebinding", async () => {
+    useFakeProvider();
+
+    const response = await chat(
+      chatRequest(question("Hi"), { url: "http://rebind.evil.example/api/chat" }),
+    );
+
+    expect(response.status).toBe(403);
+    expect(fake.requests).toHaveLength(0);
+  });
+
+  it("are served for hosts listed in ANSWERUI_ALLOWED_HOSTS", async () => {
+    useFakeProvider({ ANSWERUI_ALLOWED_HOSTS: "answerui.internal" });
+
+    const response = await chat(
+      chatRequest(question("Hi"), { url: "http://answerui.internal:3000/api/chat" }),
+    );
+
+    expect(response.status).toBe(200);
+  });
+
+  it("are refused when they come from another site", async () => {
+    useFakeProvider();
+
+    const response = await chat(
+      chatRequest(question("Hi"), { headers: { origin: "https://evil.example" } }),
+    );
+
+    expect(response.status).toBe(403);
+    expect(fake.requests).toHaveLength(0);
+  });
+
+  it("are refused when the browser marks them as cross-site", async () => {
+    useFakeProvider();
+
+    const response = await listModels({ headers: { "sec-fetch-site": "cross-site" } });
+
+    expect(response.status).toBe(403);
+  });
+
+  it("are served when they come from the app itself", async () => {
+    useFakeProvider();
+    const headers = { origin: APP, "sec-fetch-site": "same-origin" };
+
+    const response = await chat(chatRequest(question("Hi"), { headers }));
+
+    expect(response.status).toBe(200);
+  });
+
+  it("are refused when the chat body isn't JSON", async () => {
+    useFakeProvider();
+
+    const response = await chat(
+      chatRequest(question("Hi"), { headers: { "content-type": "text/plain" } }),
+    );
+
+    expect(response.status).toBe(415);
+    expect(fake.requests).toHaveLength(0);
   });
 });

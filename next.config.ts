@@ -8,6 +8,13 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: process.cwd(),
   },
+  async headers() {
+    const noFraming = [
+      { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+      { key: "X-Frame-Options", value: "DENY" },
+    ];
+    return [{ source: "/:path*", headers: noFraming }];
+  },
 };
 
 export default nextConfig;
