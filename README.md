@@ -1,60 +1,120 @@
-This is an [OpenUI](https://openui.com) Self Hosted Chat project bootstrapped with [`openui-cli`](https://openui.com/docs/chat/quick-start).
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.png">
+    <img alt="AnswerUI" src=".github/assets/logo-light.png" width="420">
+  </picture>
+</p>
 
-## Setup
+<p align="center">
+  <strong>Answers you can use, not just read.</strong> Open source, any AI model.
+</p>
 
-Create `.env.local` with your OpenAI credentials:
+<p align="center">
+  <a href="https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+</p>
+
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#models">Models</a> ·
+  <a href="#try-these">Try these</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a>
+</p>
+
+---
+
+AnswerUI is a chat app that answers with live interfaces. Ask it to split a bill and you get a
+bill splitter. Ask how your savings could grow and you get sliders and a chart. Change a number
+and the answer updates on the spot, without another call to the model. When a plain sentence is
+the better answer, you get a plain sentence.
+
+It's an open-source alternative to ChatGPT's Intelligent UI that works with any
+OpenAI-compatible model, in the cloud or on your own machine.
+
+## Quick start
 
 ```bash
-OPENAI_API_KEY=...
-# Optional:
-OPENAI_MODEL=gpt-5.2
+npx answerui
 ```
 
-## Getting Started
+The first run asks for an API key, or press Enter to use a local model server such as
+[Ollama](https://ollama.com). AnswerUI opens in your browser at `http://127.0.0.1:3210`.
 
-First, run the development server:
+<details>
+<summary>Docker</summary>
 
 ```bash
+docker run -p 127.0.0.1:3000:3000 -e OPENAI_API_KEY=sk-... ghcr.io/0xcro3dile/answerui
+```
+
+To use Ollama on the host, pass `-e OLLAMA_HOST=host.docker.internal` (on Linux, also
+`--add-host=host.docker.internal:host-gateway`).
+
+</details>
+
+<details>
+<summary>From source</summary>
+
+```bash
+git clone https://github.com/0xcro3dile/answerui.git
+cd answerui
+pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+</details>
 
-You can start editing the page by modifying `src/app/api/chat/route.ts` and improving your agent
-by adding system prompts or tools. A LangGraph scaffold puts the
-implementation in `src/agent/agent.ts` instead.
+## Models
 
-The generated app includes a `get_weather` tool example. Ask “What’s the weather in Berlin?” to exercise its native tool loop.
+AnswerUI talks to any OpenAI-compatible API. Set these in your environment, in `.env.local`
+when running from source, or with `npx answerui --setup`:
 
-## Deploy
+| Variable          | What it does                                 |
+| ----------------- | -------------------------------------------- |
+| `OPENAI_API_KEY`  | Your provider's API key                      |
+| `OPENAI_BASE_URL` | Your provider's endpoint (default: OpenAI)   |
+| `OPENAI_MODEL`    | The default model; you can switch in the app |
+| `OLLAMA_HOST`     | Where to find Ollama (default: `localhost`)  |
 
-From the project directory, deploy a preview with the pinned OpenUI CLI:
+| Provider   | `OPENAI_BASE_URL`                |
+| ---------- | -------------------------------- |
+| OpenAI     | leave empty                      |
+| OpenRouter | `https://openrouter.ai/api/v1`   |
+| Groq       | `https://api.groq.com/openai/v1` |
+| LM Studio  | `http://localhost:1234/v1`       |
+| Ollama     | leave everything empty           |
 
-```bash
-pnpm run deploy
-pnpm run deploy -- --prod
-```
+Larger models build better interfaces. Small local models may fall back to plain text more often.
 
-The command deploys to Vercel. Allowlisted keys from `.env` / `.env.local` (including `OPENAI_API_KEY`)
-are passed to that deployment unless you use `--skip-env`. Persist them on the Vercel project for later
-deploys.
+## Try these
 
-## Framework deployments
+- _Split our dinner bill: burrata $15.99 shared by all four of us, margherita $19.50 for Ana and
+  Ben, carbonara $22 for Cara, steak $34 for Dev, tiramisu $7.50 for Ana and Cara. Tax is 8.875%._
+- _I have $5,000 saved and can add $500 a month. How could it grow over 10 years?_
+- _Plan a roast beef dinner for 6 people, with amounts that rescale when I change the guest count._
 
-The Vercel AI SDK scaffold runs its backend inside the Next.js API route, so the
-frontend and backend can be deployed together as one Next.js project.
+## How it works
 
-## Conversation storage
+Answers are written in [OpenUI Lang](https://github.com/thesysdev/openui), a compact language for
+interfaces that renders while it streams. AnswerUI teaches the model to bind inputs to variables
+and compute results from them, so a tool keeps working in your browser after the model is done.
 
-This starter does not configure durable conversation storage. `AgentInterface`
-keeps messages in memory for the current page session and sends that history to
-`/api/chat`; refreshing the page loses it. To persist conversations, pass a storage
-implementation to `AgentInterface` and back it with your own database. Add a
-LangGraph checkpointer separately only for graph-specific durable state.
+## Privacy
 
-## Learn More
+AnswerUI has no telemetry. Your messages go only to the model provider you configure, and your key
+stays on your machine. It listens on `127.0.0.1` by default; don't expose it to the internet
+without authentication in front of it, because anyone who can reach it can use your key.
 
-To learn more about OpenUI, take a look at the following resources:
+## Contributing
 
-- [OpenUI Documentation](https://openui.com/docs) - learn about OpenUI features and API.
-- [OpenUI GitHub repository](https://github.com/thesysdev/openui) - your feedback and contributions are welcome!
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Credits
+
+Built on [OpenUI](https://github.com/thesysdev/openui) (MIT). AnswerUI is not affiliated with
+OpenAI.
+
+## License
+
+[MIT](LICENSE)
