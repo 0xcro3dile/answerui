@@ -64,13 +64,29 @@ describe("POST /api/chat", () => {
     expect(fake.requests[0].model).toBe("fake-large");
   });
 
-  it("falls back to the configured model, then the first available one", async () => {
+  it("falls back to the configured model", async () => {
     useFakeProvider({ OPENAI_MODEL: "fake-large" });
-    await (await ask("Hi")).text();
-    vi.stubEnv("OPENAI_MODEL", "");
+
     await (await ask("Hi")).text();
 
-    expect(fake.requests.map((r) => r.model)).toEqual(["fake-large", FAKE_MODELS[0]]);
+    expect(fake.requests[0].model).toBe("fake-large");
+  });
+
+  it("falls back to the first available model when none is configured", async () => {
+    useFakeProvider();
+
+    await (await ask("Hi")).text();
+
+    expect(fake.requests[0].model).toBe(FAKE_MODELS[0]);
+  });
+
+  it("rejects a request without messages", async () => {
+    useFakeProvider();
+
+    const response = await chat(new Request("http://app/api/chat", { method: "POST", body: "{" }));
+
+    expect(response.status).toBe(400);
+    expect(fake.requests).toHaveLength(0);
   });
 
   it("explains how to set up a provider when none is available", async () => {
