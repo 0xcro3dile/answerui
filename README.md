@@ -1,9 +1,28 @@
-# AnswerUI
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.png">
+    <img alt="AnswerUI" src=".github/assets/logo-light.png" width="420">
+  </picture>
+</p>
 
-**Answers you can use, not just read. Open source, any AI model.**
+<p align="center">
+  <strong>Answers you can use, not just read.</strong> Open source, any AI model.
+</p>
 
-[![CI](https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml/badge.svg)](https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+<p align="center">
+  <a href="https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+</p>
+
+<p align="center">
+  <a href="#quick-start">Quick start</a> ·
+  <a href="#models">Models</a> ·
+  <a href="#try-these">Try these</a> ·
+  <a href="#how-it-works">How it works</a> ·
+  <a href="CONTRIBUTING.md">Contributing</a>
+</p>
+
+---
 
 AnswerUI is a chat app that answers with live interfaces. Ask it to split a bill and you get a
 bill splitter. Ask how your savings could grow and you get sliders and a chart. Change a number
