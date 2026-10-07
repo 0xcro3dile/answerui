@@ -5,5 +5,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   plugins: [react()],
   resolve: { alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) } },
-  test: { include: ["src/**/*.test.{ts,tsx}", "test/**/*.test.{ts,tsx}"] },
+  test: {
+    include: ["src/**/*.test.{ts,tsx}", "test/**/*.test.{ts,tsx}"],
+    setupFiles: ["test/setup.ts"],
+  },
 });
