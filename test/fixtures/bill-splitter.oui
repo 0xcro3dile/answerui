@@ -1,0 +1,40 @@
+root = Stack([header, receipt, extras, summary])
+$p1 = "15.99"
+$p2 = "19.50"
+$p3 = "22.00"
+$p4 = "34.00"
+$p5 = "7.50"
+$s1 = {ana: true, ben: true, cara: true, dev: true}
+$s2 = {ana: true, ben: true}
+$s3 = {cara: true}
+$s4 = {dev: true}
+$s5 = {ana: true, cara: true}
+$tax = "8.875"
+$tip = 18
+header = CardHeader("Split the bill", "Edit prices, tick who shared each dish, then pick a tip")
+receipt = Card([InlineHeader("Receipt", "$107.78 before tip"), burrata, pizza, pasta, steak, dessert])
+burrata = Stack([FormControl("Burrata ($)", Input("p1", "0.00", "number", null, $p1)), FormControl("Shared by", CheckBoxGroup("s1", diners, null, $s1))], "row", "l", "start", "start", true)
+pizza = Stack([FormControl("Margherita ($)", Input("p2", "0.00", "number", null, $p2)), FormControl("Shared by", CheckBoxGroup("s2", diners, null, $s2))], "row", "l", "start", "start", true)
+pasta = Stack([FormControl("Carbonara ($)", Input("p3", "0.00", "number", null, $p3)), FormControl("Shared by", CheckBoxGroup("s3", diners, null, $s3))], "row", "l", "start", "start", true)
+steak = Stack([FormControl("Steak ($)", Input("p4", "0.00", "number", null, $p4)), FormControl("Shared by", CheckBoxGroup("s4", diners, null, $s4))], "row", "l", "start", "start", true)
+dessert = Stack([FormControl("Tiramisu ($)", Input("p5", "0.00", "number", null, $p5)), FormControl("Shared by", CheckBoxGroup("s5", diners, null, $s5))], "row", "l", "start", "start", true)
+diners = [CheckBoxItem("Ana", "", "ana"), CheckBoxItem("Ben", "", "ben"), CheckBoxItem("Cara", "", "cara"), CheckBoxItem("Dev", "", "dev")]
+extras = Card([FormControl("Sales tax (%)", Input("tax", "0", "number", null, $tax)), InlineHeader("Tip"), tips])
+tips = Buttons([tip15, tip18, tip20, tip25])
+tip15 = Button("15%", Action([@Set($tip, 15)]), $tip == 15 ? "primary" : "secondary")
+tip18 = Button("18%", Action([@Set($tip, 18)]), $tip == 18 ? "primary" : "secondary")
+tip20 = Button("20%", Action([@Set($tip, 20)]), $tip == 20 ? "primary" : "secondary")
+tip25 = Button("25%", Action([@Set($tip, 25)]), $tip == 25 ? "primary" : "secondary")
+summary = Card([InlineHeader("Who pays what", "Tax and tip are shared in proportion to what each person ordered"), payTable, totalLine])
+payTable = Table([Col("Diner", ["Ana", "Ben", "Cara", "Dev"]), Col("Pays ($)", [@Round(ana * rate, 2), @Round(ben * rate, 2), @Round(cara * rate, 2), @Round(dev * rate, 2)], "number")])
+totalLine = TextContent("Total with tax and tip: $" + @Round(@Sum([$p1, $p2, $p3, $p4, $p5]) * rate, 2), "large-heavy")
+rate = 1 + $tax / 100 + $tip / 100
+n1 = @Sum([$s1.ana, $s1.ben, $s1.cara, $s1.dev])
+n2 = @Sum([$s2.ana, $s2.ben, $s2.cara, $s2.dev])
+n3 = @Sum([$s3.ana, $s3.ben, $s3.cara, $s3.dev])
+n4 = @Sum([$s4.ana, $s4.ben, $s4.cara, $s4.dev])
+n5 = @Sum([$s5.ana, $s5.ben, $s5.cara, $s5.dev])
+ana = $s1.ana * $p1 / n1 + $s2.ana * $p2 / n2 + $s3.ana * $p3 / n3 + $s4.ana * $p4 / n4 + $s5.ana * $p5 / n5
+ben = $s1.ben * $p1 / n1 + $s2.ben * $p2 / n2 + $s3.ben * $p3 / n3 + $s4.ben * $p4 / n4 + $s5.ben * $p5 / n5
+cara = $s1.cara * $p1 / n1 + $s2.cara * $p2 / n2 + $s3.cara * $p3 / n3 + $s4.cara * $p4 / n4 + $s5.cara * $p5 / n5
+dev = $s1.dev * $p1 / n1 + $s2.dev * $p2 / n2 + $s3.dev * $p3 / n3 + $s4.dev * $p4 / n4 + $s5.dev * $p5 / n5

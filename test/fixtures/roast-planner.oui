@@ -1,0 +1,11 @@
+root = Stack([header, guestsCard, shopping, timing])
+$guests = [6]
+header = CardHeader("Roast beef dinner", "Move the slider and everything rescales")
+guestsCard = Card([FormControl("Guests", Slider("guests", "discrete", 2, 16, 1, [6], "Guests", null, $guests))])
+shopping = Table([Col("Ingredient", ingredients), Col("Amount", amounts)])
+ingredients = ["Beef roasting joint", "Potatoes", "Carrots", "Yorkshire puddings", "Gravy"]
+amounts = ["" + beefKg + " kg", "" + @Round($guests[0] * 0.25, 2) + " kg", "" + @Round($guests[0] * 0.12, 2) + " kg", "" + $guests[0] * 2, "" + $guests[0] * 80 + " ml"]
+beefKg = @Round($guests[0] * 0.25, 2)
+timing = Card([cookLine, restLine])
+cookLine = TextContent("Roast for " + @Round(beefKg / 0.45 * 20 + 20, 0) + " minutes at 180°C.", "large-heavy")
+restLine = TextContent("Rest it for 15 minutes before carving. In the center, 57°C is medium-rare and 63°C is medium.")

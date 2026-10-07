@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
 import type { AddressInfo } from "node:net";
+import { join } from "node:path";
 
 export const FAKE_MODELS = ["fake-small", "fake-large"];
 export const REJECTED_KEY = "bad-key";
@@ -12,7 +13,7 @@ const fixtureByKeyword: [RegExp, string][] = [
 ];
 
 export function fixture(name: string): string {
-  return readFileSync(new URL(`./fixtures/${name}.oui`, import.meta.url), "utf8");
+  return readFileSync(join(import.meta.dirname, "fixtures", `${name}.oui`), "utf8");
 }
 
 export type ChatRequest = { model: string; messages: { role: string; content: string }[] };
