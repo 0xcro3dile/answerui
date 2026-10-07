@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
 import { chmodSync, existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { createServer } from "node:net";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
 import { createInterface } from "node:readline";
@@ -10,11 +11,13 @@ const USAGE = `Usage: answerui [options]
 
 Options:
   --setup        Choose a model provider and save it
-  --port <port>  Port to listen on (default: 3210)
+  --port <port>  Port to listen on (default: the first free one from 3210)
   --host <host>  Address to listen on (default: 127.0.0.1)
   --no-open      Don't open the browser
   -v, --version  Print the version
   -h, --help     Print this help`;
+
+const DEFAULT_PORT = 3210;
 
 const configFile = join(
   process.env.XDG_CONFIG_HOME || join(homedir(), ".config"),
@@ -25,7 +28,7 @@ const configFile = join(
 const { values: options } = parseArgs({
   options: {
     setup: { type: "boolean" },
-    port: { type: "string", default: process.env.PORT || "3210" },
+    port: { type: "string" },
     host: { type: "string", default: "127.0.0.1" },
     "no-open": { type: "boolean" },
     version: { type: "boolean", short: "v" },
@@ -42,8 +45,9 @@ async function start() {
   if (!existsSync(configFile) && !hasProviderInEnv() && process.stdin.isTTY) await setup();
   if (existsSync(configFile)) process.loadEnvFile(configFile);
 
+  const port = options.port || process.env.PORT || String(await firstFreePort(DEFAULT_PORT));
   Object.assign(process.env, {
-    PORT: options.port,
+    PORT: port,
     HOSTNAME: options.host,
     NODE_ENV: "production",
     NEXT_TELEMETRY_DISABLED: "1",
@@ -51,7 +55,7 @@ async function start() {
   });
   await import("../app/server.js");
 
-  const url = `http://${options.host}:${options.port}`;
+  const url = `http://${options.host}:${port}`;
   await waitUntilReady(url);
   console.log(`AnswerUI is running at ${url}`);
   if (!options["no-open"]) openBrowser(url);
@@ -83,6 +87,15 @@ async function ask(questions) {
   }
   reader.close();
   return answers;
+}
+
+function firstFreePort(port) {
+  return new Promise((resolve) => {
+    const probe = createServer()
+      .once("error", () => resolve(firstFreePort(port + 1)))
+      .once("listening", () => probe.close(() => resolve(port)))
+      .listen(port, options.host);
+  });
 }
 
 function hasProviderInEnv() {
