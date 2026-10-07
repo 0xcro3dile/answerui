@@ -1,3 +1,0 @@
-## What
-
-## How to test
