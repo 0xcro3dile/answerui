@@ -1,4 +1,4 @@
-import { SETUP_NEEDED, errorResponse, findProvider, listModels } from "@/server/models";
+import { SETUP_NEEDED, errorResponse, findProvider, listModels } from "@/server/llm";
 
 export const dynamic = "force-dynamic";
 

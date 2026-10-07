@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { resolveProvider, type Provider } from "@/core/provider";
 import { systemPrompt } from "@/core/prompt";
+import { resolveProvider, type Provider } from "@/core/provider";
 
 export const SETUP_NEEDED =
   "No model provider found. Set OPENAI_API_KEY (and optionally OPENAI_BASE_URL and OPENAI_MODEL), or start Ollama.";
@@ -15,17 +15,14 @@ export async function listModels(provider: Provider): Promise<string[]> {
   return page.data.map((model) => model.id);
 }
 
-export async function defaultModel(provider: Provider): Promise<string> {
-  return provider.model ?? (await listModels(provider))[0];
-}
-
 export async function streamAnswer(
   provider: Provider,
   request: { model?: string; messages: ChatCompletionMessageParam[]; signal: AbortSignal },
 ): Promise<ReadableStream> {
+  const model = request.model || provider.model || (await listModels(provider))[0];
   const stream = await client(provider).chat.completions.create(
     {
-      model: request.model || (await defaultModel(provider)),
+      model,
       messages: [{ role: "system", content: systemPrompt }, ...request.messages],
       stream: true,
     },

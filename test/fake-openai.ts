@@ -68,7 +68,7 @@ async function readBody(req: IncomingMessage): Promise<string> {
   return body;
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (import.meta.main) {
   const { url } = await startFakeOpenAI(Number(process.env.PORT ?? 4010));
   console.log(`Fake OpenAI listening on ${url}`);
 }
