@@ -1,8 +1,6 @@
 export type Provider = { baseURL: string; apiKey: string; model?: string };
 
-export type Env = Partial<
-  Record<"OPENAI_API_KEY" | "OPENAI_BASE_URL" | "OPENAI_MODEL" | "OLLAMA_HOST", string>
->;
+export type Env = Record<string, string | undefined>;
 
 const OPENAI_URL = "https://api.openai.com/v1";
 const OLLAMA_URL = "http://localhost:11434";
