@@ -52,6 +52,15 @@ describe("resolveProvider", () => {
     expect(provider?.baseURL).toBe("http://127.0.0.1:9000/v1");
   });
 
+  it("uses Ollama's default port when OLLAMA_HOST has none", async () => {
+    const provider = await resolveProvider(
+      { OLLAMA_HOST: "0.0.0.0" },
+      reachable("http://0.0.0.0:11434/v1/models"),
+    );
+
+    expect(provider?.baseURL).toBe("http://0.0.0.0:11434/v1");
+  });
+
   it("treats empty values as unset", async () => {
     const env = { OPENAI_API_KEY: "", OPENAI_BASE_URL: "", OPENAI_MODEL: "" };
 
