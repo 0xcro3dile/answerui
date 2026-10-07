@@ -5,6 +5,7 @@ import { join } from "node:path";
 
 export const FAKE_MODELS = ["fake-small", "fake-large"];
 export const REJECTED_KEY = "bad-key";
+export const REJECTED_QUESTION = /please fail/i;
 
 const fixtureByKeyword: [RegExp, string][] = [
   [/bill|split/i, "bill-splitter"],
@@ -30,6 +31,9 @@ export async function startFakeOpenAI(port = 0) {
     if (req.method === "POST" && req.url === "/v1/chat/completions") {
       const body = JSON.parse(await readBody(req)) as ChatRequest;
       requests.push(body);
+      if (REJECTED_QUESTION.test(lastQuestion(body))) {
+        return sendJson(res, 400, { error: { message: "The model rejected this request" } });
+      }
       return streamAnswer(res, fixture(pickFixture(body)));
     }
     sendJson(res, 404, { error: { message: "Not found" } });
@@ -43,8 +47,12 @@ export async function startFakeOpenAI(port = 0) {
   };
 }
 
-function pickFixture({ messages }: ChatRequest): string {
-  const question = messages.findLast((m) => m.role === "user")?.content ?? "";
+function lastQuestion({ messages }: ChatRequest): string {
+  return messages.findLast((m) => m.role === "user")?.content ?? "";
+}
+
+function pickFixture(request: ChatRequest): string {
+  const question = lastQuestion(request);
   return fixtureByKeyword.find(([pattern]) => pattern.test(question))?.[1] ?? "plain";
 }
 
