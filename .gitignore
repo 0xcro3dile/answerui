@@ -21,6 +21,8 @@
 
 # production
 /build
+/dist
+*.tgz
 
 # misc
 .DS_Store
