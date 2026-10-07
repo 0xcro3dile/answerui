@@ -1,15 +1,18 @@
-import { SETUP_NEEDED, errorResponse, findProvider, listModels } from "@/server/llm";
+import { findProvider, listModels } from "@/server/llm";
+import { providerFailed, setupNeeded, untrustedRequest } from "@/server/responses";
 
 export const dynamic = "force-dynamic";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const untrusted = untrustedRequest(req);
+  if (untrusted) return untrusted;
+
   const provider = await findProvider();
-  if (!provider) return Response.json({ error: SETUP_NEEDED }, { status: 503 });
+  if (!provider) return setupNeeded();
 
   try {
-    const models = await listModels(provider);
-    return Response.json({ models, selected: provider.model ?? models[0] });
+    return Response.json({ models: await listModels(provider), selected: provider.model ?? null });
   } catch (error) {
-    return errorResponse(error);
+    return providerFailed(error, provider);
   }
 }
