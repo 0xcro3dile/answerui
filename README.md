@@ -35,7 +35,7 @@ pnpm run deploy
 pnpm run deploy -- --prod
 ```
 
-The command deploys to Vercel. Allowlisted keys from `.env` / `.env.local` (including `OPENAI_API_KEY`) 
+The command deploys to Vercel. Allowlisted keys from `.env` / `.env.local` (including `OPENAI_API_KEY`)
 are passed to that deployment unless you use `--skip-env`. Persist them on the Vercel project for later
 deploys.
 

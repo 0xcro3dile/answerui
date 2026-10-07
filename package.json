@@ -1,43 +1,62 @@
 {
   "name": "answerui",
-  "version": "0.1.1",
-  "private": true,
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@openuidev/lang-core",
-      "esbuild",
-      "sharp",
-      "unrs-resolver"
-    ]
+  "version": "0.1.0",
+  "description": "Answers you can use, not just read. Open source, any AI model.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xcro3dile/answerui.git"
   },
+  "keywords": [
+    "generative-ui",
+    "openui",
+    "llm",
+    "ollama",
+    "chatgpt-alternative",
+    "react",
+    "nextjs"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "private": true,
+  "packageManager": "pnpm@11.19.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy": "openui deploy",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "spec": "openui --no-telemetry generate src/lib/library.ts --spec > src/generated/spec.json"
   },
   "dependencies": {
-    "@openuidev/lang-core": "0.3.0",
-    "@openuidev/react-lang": "^0.3.0",
-    "@openuidev/react-ui": "^0.16.3",
+    "@openuidev/lang-core": "0.3.1",
+    "@openuidev/react-lang": "0.3.1",
+    "@openuidev/react-ui": "0.16.3",
     "next": "^16.3.1",
     "openai": "^6.22.0",
     "react": "19.2.3",
     "react-dom": "19.2.3"
   },
   "devDependencies": {
-    "@openuidev/cli": "0.4.1",
-    "@types/node": "^20",
+    "@openuidev/cli": "0.5.0",
+    "@playwright/test": "1.63.0",
+    "@testing-library/dom": "10.4.2",
+    "@testing-library/react": "16.3.3",
+    "@types/node": "^24.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "6.1.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
-    "typescript": "^5"
-  },
-  "allowScripts": {
-    "@openuidev/lang-core": true,
-    "sharp": true,
-    "unrs-resolver": true
+    "jsdom": "30.1.2",
+    "prettier": "3.9.9",
+    "typescript": "^5",
+    "vitest": "5.0.3"
   }
 }
