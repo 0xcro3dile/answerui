@@ -45,11 +45,12 @@ The first run asks for an API key, or press Enter to use a local model server su
 <summary>Docker</summary>
 
 ```bash
-docker run -p 127.0.0.1:3000:3000 -e OPENAI_API_KEY=sk-... ghcr.io/0xcro3dile/answerui
+docker run -p 127.0.0.1:3000:3000 --env-file .env ghcr.io/0xcro3dile/answerui
 ```
 
-To use Ollama on the host, pass `-e OLLAMA_HOST=host.docker.internal` (on Linux, also
-`--add-host=host.docker.internal:host-gateway`).
+Put your provider settings in `.env` (see [Models](#models)) so the key stays out of your shell
+history. To use Ollama on the host, add `-e OLLAMA_HOST=host.docker.internal`; on Linux also add
+`--add-host=host.docker.internal:host-gateway` and start Ollama with `OLLAMA_HOST=0.0.0.0`.
 
 </details>
 
@@ -68,14 +69,16 @@ pnpm dev
 ## Models
 
 AnswerUI talks to any OpenAI-compatible API. Set these in your environment, in `.env.local`
-when running from source, or with `npx answerui --setup`:
+when running from source, or with `npx answerui --setup`. Settings saved with `--setup` take
+precedence over your environment.
 
-| Variable          | What it does                                 |
-| ----------------- | -------------------------------------------- |
-| `OPENAI_API_KEY`  | Your provider's API key                      |
-| `OPENAI_BASE_URL` | Your provider's endpoint (default: OpenAI)   |
-| `OPENAI_MODEL`    | The default model; you can switch in the app |
-| `OLLAMA_HOST`     | Where to find Ollama (default: `localhost`)  |
+| Variable                 | What it does                                                       |
+| ------------------------ | ------------------------------------------------------------------ |
+| `OPENAI_API_KEY`         | Your provider's API key                                            |
+| `OPENAI_BASE_URL`        | Your provider's endpoint (default: OpenAI)                         |
+| `OPENAI_MODEL`           | The default model (`gpt-5.2` on OpenAI); you can switch in the app |
+| `OLLAMA_HOST`            | Where to find Ollama (default: `localhost`)                        |
+| `ANSWERUI_ALLOWED_HOSTS` | Extra hostnames to serve, comma-separated, e.g. behind a proxy     |
 
 | Provider   | `OPENAI_BASE_URL`                |
 | ---------- | -------------------------------- |
@@ -86,6 +89,8 @@ when running from source, or with `npx answerui --setup`:
 | Ollama     | leave everything empty           |
 
 Larger models build better interfaces. Small local models may fall back to plain text more often.
+AnswerUI's instructions are about 10,000 tokens, so give Ollama a bigger context window than its
+default, for example by starting it with `OLLAMA_CONTEXT_LENGTH=16384`.
 
 ## Try these
 

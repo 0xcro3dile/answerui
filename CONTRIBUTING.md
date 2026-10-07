@@ -40,6 +40,11 @@ Run `pnpm exec playwright install chromium` once before the first e2e run.
 
 ## Releases
 
-Releases are automated. Merging into `main` updates a release PR with the changelog. Merging that
-PR tags the version, then publishes the package to npm and the image to the GitHub Container
-Registry.
+Push a version tag from `main`:
+
+```bash
+git tag v0.1.0 && git push origin v0.1.0
+```
+
+CI tests and builds that version, publishes it to npm and the GitHub Container Registry, then
+creates the GitHub release with notes generated from the merged PRs.
