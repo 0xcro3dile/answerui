@@ -10,7 +10,7 @@ permissions:
 
 concurrency:
   group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 env:
   DO_NOT_TRACK: 1
@@ -28,6 +28,8 @@ jobs:
       - run: pnpm lint
       - run: pnpm format:check
       - run: pnpm typecheck
+      - name: Check the component spec matches the installed library
+        run: pnpm spec && git diff --exit-code src/generated/spec.json
 
   unit:
     runs-on: ubuntu-latest
@@ -122,5 +124,7 @@ jobs:
           tags: answerui:ci
           cache-from: type=gha
           cache-to: type=gha,mode=max
-      - run: docker run --detach --publish 127.0.0.1:3000:3000 --env OLLAMA_HOST=127.0.0.1:9 answerui:ci
+      - run: docker run --detach --name answerui --publish 127.0.0.1:3000:3000 --env OLLAMA_HOST=127.0.0.1:9 answerui:ci
       - run: node scripts/smoke-test.mjs http://127.0.0.1:3000
+      - if: failure()
+        run: docker logs answerui
