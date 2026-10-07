@@ -19,6 +19,10 @@ describe("systemPrompt", () => {
     expect(systemPrompt).toMatch(/no power operator/i);
   });
 
+  it("warns that input values are text, so + would join them", () => {
+    expect(systemPrompt).toMatch(/Input values are text/);
+  });
+
   it("explains that slider values are arrays", () => {
     expect(systemPrompt).toContain("$var[0]");
   });
