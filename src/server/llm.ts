@@ -18,6 +18,7 @@ export async function streamAnswer(
 ): Promise<ReadableStream> {
   const stream = await client(provider).chat.completions.create(
     {
+      ...provider.extraBody,
       model: request.model,
       messages: [{ role: "system", content: systemPrompt }, ...request.messages],
       stream: true,
