@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { systemPrompt } from "./prompt";
+import { sceneExample, systemPrompt } from "./prompt";
 
 describe("systemPrompt", () => {
   it("enables reactive $variables so tools update without another model call", () => {
@@ -33,5 +33,30 @@ describe("systemPrompt", () => {
 
   it("explains that slider values are arrays", () => {
     expect(systemPrompt).toContain("$var[0]");
+  });
+
+  it("asks for whole-number slider steps, since continuous sliders round smaller ones up to 1", () => {
+    expect(systemPrompt).toMatch(/Slider steps must be whole numbers/);
+    expect(sceneExample).not.toMatch(/Slider\([^)]*"continuous", [\d.]+, [\d.]+, 0\./);
+  });
+
+  it("offers Scene for 3D, motion and simulations, with a working example", () => {
+    expect(systemPrompt).toContain("Scene(");
+    expect(systemPrompt).toContain('orbit = Scene("A planet orbiting the Sun", "3d"');
+    expect(systemPrompt).toContain(sceneExample);
+  });
+
+  it("asks for numbers the answer can't compute to come from the scene", () => {
+    expect(systemPrompt).toContain(
+      "Compute numbers the answer can't (square roots, powers, trig) inside the scene",
+    );
+  });
+
+  it("asks for the Scene to be written last, so the rest of the answer shows first", () => {
+    expect(systemPrompt).toContain("Write the Scene statement last");
+  });
+
+  it("steers scene code away from loops that could freeze the page", () => {
+    expect(systemPrompt).toMatch(/never write while loops/);
   });
 });

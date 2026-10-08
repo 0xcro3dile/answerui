@@ -22,8 +22,8 @@
   "private": true,
   "packageManager": "pnpm@11.19.0",
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
+    "dev": "pnpm scene && next dev",
+    "build": "pnpm scene && next build",
     "start": "next start",
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
@@ -33,6 +33,7 @@
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "spec": "openui --no-telemetry generate src/lib/library.ts --spec > src/generated/spec.json",
+    "scene": "esbuild src/scene/runtime/index.ts --bundle --minify --format=iife --global-name=AnswerUIScene --legal-comments=eof --target=es2020 --outfile=public/scene/runtime.js",
     "package": "node scripts/package.mjs",
     "test:smoke": "node scripts/smoke-test.mjs"
   },
@@ -43,7 +44,8 @@
     "next": "^16.3.1",
     "openai": "^6.22.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "zod": "4.6.5"
   },
   "devDependencies": {
     "@openuidev/cli": "0.5.0",
@@ -53,11 +55,14 @@
     "@types/node": "^24.19.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "0.186.0",
     "@vitejs/plugin-react": "6.1.2",
+    "esbuild": "^0.28.2",
     "eslint": "^9",
     "eslint-config-next": "16.3.0",
     "jsdom": "30.1.2",
     "prettier": "3.9.9",
+    "three": "0.186.1",
     "typescript": "^5",
     "vitest": "5.0.3"
   }

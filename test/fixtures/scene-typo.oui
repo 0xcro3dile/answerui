@@ -1,0 +1,7 @@
+root = Stack([intro, ball])
+intro = TextContent("Here is a bouncing ball.")
+ball = Scene("A bouncing ball", "2d", "
+  onFrame((t) => {
+    ctx.clearRect(0, 0, 800, 450
+  });
+")

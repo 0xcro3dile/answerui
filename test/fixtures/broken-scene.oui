@@ -1,0 +1,7 @@
+root = Stack([intro, cube])
+intro = TextContent("Here is a spinning cube.")
+cube = Scene("A spinning cube", "3d", "
+  onFrame((t, dt) => {
+    box.rotation.y += dt;
+  });
+")

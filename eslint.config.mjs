@@ -19,6 +19,7 @@ export default defineConfig([
     "out/**",
     "build/**",
     "dist/**",
+    "public/scene/**",
     "next-env.d.ts",
     "playwright-report/**",
   ]),

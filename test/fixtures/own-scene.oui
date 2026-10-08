@@ -1,0 +1,13 @@
+$sim = {aspect: 0, lit: 0}
+root = Stack([info, own])
+info = TextContent("Aspect " + $sim.aspect + ", lit " + $sim.lit)
+own = Scene("A scene of its own", "3d", "
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(50, 1, 0.1, 100);
+  camera.position.set(0, 0, 5);
+  scene.add(new THREE.Mesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshStandardMaterial({ color: 'tomato' })));
+  onFrame(() => {
+    const lit = scene.children.filter((child) => child.isLight).length;
+    report({ aspect: Math.round(camera.aspect * 10) / 10, lit: lit });
+  });
+", {}, $sim)

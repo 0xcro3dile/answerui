@@ -1,7 +1,8 @@
 // @vitest-environment jsdom
 import { createParser, type LibraryJSONSchema } from "@openuidev/lang-core";
 import { Renderer } from "@openuidev/react-lang";
-import { openuiLibrary } from "@openuidev/react-ui/genui-lib";
+import { sceneExample } from "@/core/prompt";
+import { library } from "@/lib/library";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import spec from "@/generated/spec.json";
@@ -11,7 +12,18 @@ const parser = createParser(spec.schema as unknown as LibraryJSONSchema);
 
 afterEach(cleanup);
 
-describe.each(["plain", "bill-splitter", "savings", "roast-planner"])("%s answer", (name) => {
+describe.each([
+  "plain",
+  "bill-splitter",
+  "savings",
+  "roast-planner",
+  "orbit",
+  "pendulum",
+  "broken-scene",
+  "scene-typo",
+  "own-scene",
+  "root-first",
+])("%s answer", (name) => {
   it("parses with no errors, gaps or unused statements", () => {
     const { root, meta } = parser.parse(fixture(name));
 
@@ -21,7 +33,7 @@ describe.each(["plain", "bill-splitter", "savings", "roast-planner"])("%s answer
 });
 
 function renderAnswer(name: string) {
-  render(<Renderer response={fixture(name)} library={openuiLibrary} />);
+  render(<Renderer response={fixture(name)} library={library} />);
 }
 
 function nudgeSlider(currentValue: number) {
@@ -106,5 +118,11 @@ describe("roast planner", () => {
 
     expect(await screen.findByRole("row", { name: "Beef roasting joint 1.75 kg" })).toBeTruthy();
     expect(await screen.findByText("Roast for 98 minutes at 180°C.")).toBeTruthy();
+  });
+});
+
+describe("orbit example", () => {
+  it("is the exact example the prompt teaches", () => {
+    expect(fixture("orbit").trim()).toBe(sceneExample);
   });
 });

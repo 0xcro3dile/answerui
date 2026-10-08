@@ -8,7 +8,7 @@ import {
   openAIReadableStreamAdapter,
   useSystemThemeMode,
 } from "@openuidev/react-ui";
-import { openuiLibrary } from "@openuidev/react-ui/genui-lib";
+import { library } from "@/lib/library";
 
 const llm = fetchLLM({
   url: "/api/chat",
@@ -21,12 +21,7 @@ export default function Home() {
 
   return (
     <div style={{ height: "100vh", width: "100vw", overflow: "hidden" }}>
-      <AgentInterface
-        llm={llm}
-        componentLibrary={openuiLibrary}
-        agentName="AnswerUI"
-        theme={{ mode }}
-      />
+      <AgentInterface llm={llm} componentLibrary={library} agentName="AnswerUI" theme={{ mode }} />
     </div>
   );
 }

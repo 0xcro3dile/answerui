@@ -328,6 +328,10 @@
     "Modal": {
       "signature": "Modal(title: string, open?: $binding<boolean>, children: (TextContent | MarkDownRenderer | CardHeader | Callout | TextCallout | CodeBlock | Image | ImageBlock | ImageGallery | Separator | HorizontalBarChart | RadarChart | PieChart | RadialChart | SingleStackedBarChart | ScatterChart | AreaChart | BarChart | LineChart | Table | TagBlock | Form | Buttons | IconButton | Steps | InlineHeader | EntityList | EditableTable | SnippetCardBlock | OverviewCardBlock | ContextCardBlock | CompositeCardBlock | VisualCardBlock)[], size?: \"sm\" | \"md\" | \"lg\")",
       "description": "Modal dialog. open is a reactive $boolean binding — set to true to open, X/Escape/backdrop auto-closes. Put Form with buttons inside children."
+    },
+    "Scene": {
+      "signature": "Scene(title: string, mode: \"3d\" | \"2d\", code: string, params?: Record<string, any>, results?: $binding<Record<string, any>>)",
+      "description": "A live 3D or 2D animation that runs the JavaScript in code inside a sandbox, for 3D shapes, motion and simulations. Ready-made: params (the live values passed in), onFrame((t, dt) => ...) called every frame, report({name: value}) to send numbers to results, and theme (text and accent colors). 3d has THREE (r186), scene, camera, controls and lights, plus label(object, text). 2d has ctx on an 800×450 area. In three.js use BufferGeometry and setAttribute, keep objects within 10 units of the center, remember Y is up, and give materials with opacity transparent: true. Move things by dt and run code right away; don't wait for load events."
     }
   },
   "componentGroups": [
@@ -528,6 +532,12 @@
         "- CompositeCardItem: rich card with header, body array (Text, BoldText, MetricIndicatorInline, IconText, Image, charts, ListBlock, TagBlock, EntityList) and footer (price + Button) — good for products/offers.",
         "- VisualCardItem: image-first card with a BoldText body and optional Tag.",
         "- Text / BoldText / IconText / ImageText / ImageTextLarge / MetricIndicator* are the inline building blocks used INSIDE card items; do not place them directly in the root Card."
+      ]
+    },
+    {
+      "name": "Scenes",
+      "components": [
+        "Scene"
       ]
     }
   ],
@@ -780,6 +790,9 @@
       },
       "Modal": {
         "$ref": "#/$defs/Modal"
+      },
+      "Scene": {
+        "$ref": "#/$defs/Scene"
       }
     },
     "required": [
@@ -864,7 +877,8 @@
       "CompositeCardBlock",
       "VisualCardItem",
       "VisualCardBlock",
-      "Modal"
+      "Modal",
+      "Scene"
     ],
     "additionalProperties": false,
     "$defs": {
@@ -4722,6 +4736,45 @@
         ],
         "additionalProperties": false,
         "description": "Modal dialog. open is a reactive $boolean binding — set to true to open, X/Escape/backdrop auto-closes. Put Form with buttons inside children."
+      },
+      "Scene": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "3d",
+              "2d"
+            ]
+          },
+          "code": {
+            "type": "string"
+          },
+          "params": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          },
+          "results": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "title",
+          "mode",
+          "code"
+        ],
+        "additionalProperties": false,
+        "description": "A live 3D or 2D animation that runs the JavaScript in code inside a sandbox, for 3D shapes, motion and simulations. Ready-made: params (the live values passed in), onFrame((t, dt) => ...) called every frame, report({name: value}) to send numbers to results, and theme (text and accent colors). 3d has THREE (r186), scene, camera, controls and lights, plus label(object, text). 2d has ctx on an 800×450 area. In three.js use BufferGeometry and setAttribute, keep objects within 10 units of the center, remember Y is up, and give materials with opacity transparent: true. Move things by dt and run code right away; don't wait for load events."
       }
     }
   }
