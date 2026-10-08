@@ -25,6 +25,14 @@ test("draws 2D scenes too", async ({ page }) => {
   await expect(page.getByText("Seconds per swing: 3.47")).toBeVisible();
 });
 
+test("shows a scene the model built itself, fitted and lit like the ready-made one", async ({
+  page,
+}) => {
+  await ask(page, "Show me a scene of its own");
+
+  await expect(page.getByText("Aspect 1.8, lit 2")).toBeVisible();
+});
+
 test("keeps a scene away from the network, the page and storage", async ({ page }) => {
   await ask(page, "Show me a planet orbit");
   const element = page.locator('iframe[title="A planet orbiting the Sun"]');

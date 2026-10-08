@@ -25,7 +25,8 @@ export function mount3d(title: string, theme: SceneTheme, fail: (message: string
   controls.enableDamping = true;
   const light = new THREE.DirectionalLight(0xffffff, 2);
   light.position.set(5, 10, 7);
-  scene.add(new THREE.HemisphereLight(0xffffff, 0x444444, 1.5), light);
+  const lights = [new THREE.HemisphereLight(0xffffff, 0x444444, 1.5), light];
+  scene.add(...lights);
 
   const view = { scene, camera };
 
@@ -52,9 +53,12 @@ export function mount3d(title: string, theme: SceneTheme, fail: (message: string
 
   return {
     globals: { THREE, scene, camera, controls, label },
-    /** Shows a scene or camera the model made itself instead of the ready-made ones. */
+    /** Shows a scene or camera the model made itself instead of the ready-made ones, lit if it has no lights. */
     adopt(ownScene: unknown, ownCamera: unknown) {
-      if (ownScene instanceof THREE.Scene) view.scene = ownScene;
+      if (ownScene instanceof THREE.Scene) {
+        if (!ownScene.getObjectByProperty("isLight", true)) ownScene.add(...lights);
+        view.scene = ownScene;
+      }
       if (ownCamera instanceof THREE.PerspectiveCamera) {
         view.camera = ownCamera;
         controls.object = ownCamera;

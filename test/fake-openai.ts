@@ -15,6 +15,7 @@ const fixtureByKeyword: [RegExp, string][] = [
   [/pendulum/i, "pendulum"],
   [/spinning cube/i, "broken-scene"],
   [/bouncing ball/i, "scene-typo"],
+  [/scene of its own/i, "own-scene"],
 ];
 
 export function fixture(name: string): string {

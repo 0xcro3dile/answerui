@@ -21,6 +21,7 @@ describe.each([
   "pendulum",
   "broken-scene",
   "scene-typo",
+  "own-scene",
 ])("%s answer", (name) => {
   it("parses with no errors, gaps or unused statements", () => {
     const { root, meta } = parser.parse(fixture(name));
