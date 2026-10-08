@@ -63,6 +63,12 @@ body {
   height: 100%;
 }
 
+/* OpenUI's theme color, so scene labels follow light and dark mode like the rest of the answer. */
+.scene,
+.scene-error {
+  color: var(--openui-text-neutral-primary);
+}
+
 .scene {
   margin: 0;
   border: 1px solid rgb(128 128 128 / 25%);

@@ -95,6 +95,23 @@ test("says so when the browser drops a scene's graphics, and restarts it", async
   await expect(page.getByText(/This scene couldn't run/)).toHaveCount(0);
 });
 
+test("keeps the scene toolbar readable in dark mode", async ({ page }) => {
+  await page.emulateMedia({ colorScheme: "dark" });
+  await ask(page, "Show me a planet orbit");
+  const title = page.locator(".scene-bar span");
+  await expect(title).toHaveText("A planet orbiting the Sun");
+
+  const lightness = await title.evaluate((element) => {
+    const context = document.createElement("canvas").getContext("2d")!;
+    context.fillStyle = getComputedStyle(element).color;
+    context.fillRect(0, 0, 1, 1);
+    const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
+    return (0.2126 * red + 0.7152 * green + 0.0722 * blue) / 255;
+  });
+
+  expect(lightness).toBeGreaterThan(0.6);
+});
+
 test("still follows the slider when paused for reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await ask(page, "Show me a planet orbit");
