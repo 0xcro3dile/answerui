@@ -24,7 +24,7 @@ export function setup({ title, mode, theme, params: initial, paused: startPaused
   addEventListener("unhandledrejection", (event) => fail(event.reason));
   params = { ...initial };
   paused = startPaused;
-  const mounted = mode === "3d" ? mount3d(title, theme) : mount2d(title);
+  const mounted = mode === "3d" ? mount3d(title, theme, fail) : mount2d(title);
   stage = mounted;
   const onFrame = (handler: FrameHandler) => void handlers.push(handler);
   Object.assign(globalThis, mounted.globals, { params, theme, onFrame, report });

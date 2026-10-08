@@ -10,7 +10,7 @@ import {
   type ComponentRenderProps,
 } from "@openuidev/react-lang";
 import { useSystemThemeMode } from "@openuidev/react-ui";
-import { useEffect, useEffectEvent, useRef, useState, type RefObject } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { z } from "zod/v4";
 import { sceneDocument } from "./document";
 import {
@@ -56,7 +56,7 @@ function SceneView({ props }: ComponentRenderProps<z.infer<typeof SceneSchema>>)
   const triggerAction = useTriggerAction();
   const results = useStateField(props.title, props.results);
   const theme = THEMES[useSystemThemeMode()];
-  const box = useRef<HTMLElement>(null);
+  const [box, setBox] = useState<HTMLElement | null>(null);
   const nearby = useNearScreen(box);
   const [paused, setPaused] = useState(prefersReducedMotion);
   const [run, setRun] = useState(0);
@@ -78,12 +78,21 @@ function SceneView({ props }: ComponentRenderProps<z.infer<typeof SceneSchema>>)
         <button type="button" onClick={() => askForFix(error)}>
           Fix it
         </button>
+        <button
+          type="button"
+          onClick={() => {
+            setError(null);
+            setRun(run + 1);
+          }}
+        >
+          Restart
+        </button>
       </div>
     );
   }
 
   return (
-    <figure ref={box} className="scene">
+    <figure ref={setBox} className="scene">
       <div className="scene-stage">
         {streaming ? (
           <p className="scene-note">Building the scene…</p>
@@ -113,7 +122,7 @@ function SceneView({ props }: ComponentRenderProps<z.infer<typeof SceneSchema>>)
         <button type="button" disabled={streaming} onClick={() => setRun(run + 1)}>
           Restart
         </button>
-        <button type="button" disabled={streaming} onClick={() => box.current?.requestFullscreen()}>
+        <button type="button" disabled={streaming} onClick={() => box?.requestFullscreen()}>
           Fullscreen
         </button>
       </figcaption>
@@ -188,17 +197,19 @@ function prefersReducedMotion(): boolean {
   return typeof matchMedia === "function" && matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-/** Whether the element is within one screen height of view. Far scenes unload to free their WebGL context. */
-function useNearScreen(element: RefObject<HTMLElement | null>): boolean {
-  const [near, setNear] = useState(true);
+/**
+ * Whether the element is within one screen height of view. Scenes load only once the observer says so,
+ * and far ones unload, so a long chat never holds more WebGL contexts than the browser allows.
+ */
+function useNearScreen(element: HTMLElement | null): boolean {
+  const [near, setNear] = useState(() => typeof IntersectionObserver === "undefined");
   useEffect(() => {
-    const target = element.current;
-    if (!target || typeof IntersectionObserver === "undefined") return;
+    if (!element || typeof IntersectionObserver === "undefined") return;
     const observer = new IntersectionObserver(([entry]) => setNear(entry.isIntersecting), {
-      root: scrollParent(target),
+      root: scrollParent(element),
       rootMargin: "100% 0px",
     });
-    observer.observe(target);
+    observer.observe(element);
     return () => observer.disconnect();
   }, [element]);
   return near;

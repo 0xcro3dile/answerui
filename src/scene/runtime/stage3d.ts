@@ -3,8 +3,14 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { CSS2DObject, CSS2DRenderer } from "three/addons/renderers/CSS2DRenderer.js";
 import type { SceneTheme } from "../protocol";
 
-export function mount3d(title: string, theme: SceneTheme) {
+export function mount3d(title: string, theme: SceneTheme, fail: (message: string) => void) {
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  // The browser can drop a WebGL context, for example when too many are open. Say so, so the scene shows
+  // a notice with Restart instead of an empty box. (Called directly: the frame's error event would only
+  // see "Script error." from this cross-origin runtime script.)
+  renderer.domElement.addEventListener("webglcontextlost", () =>
+    fail("The browser dropped this scene's graphics. Restart it to load them again."),
+  );
   renderer.setPixelRatio(devicePixelRatio);
   renderer.domElement.setAttribute("role", "img");
   renderer.domElement.setAttribute("aria-label", title);

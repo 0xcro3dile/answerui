@@ -128,6 +128,29 @@ describe("Scene", () => {
     expect(screen.getAllByText("A spinning cube").length).toBeGreaterThan(0);
   });
 
+  it("waits to load a scene until it's near the screen", () => {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        disconnect() {}
+      },
+    );
+
+    expect(renderAnswer()).toBeNull();
+  });
+
+  it("lets the user restart a scene that stopped", async () => {
+    const frame = renderAnswer()!;
+    expect(frame).not.toBeNull();
+    fromScene(frame, { type: "error", message: "The browser dropped this scene's graphics." });
+
+    fireEvent.click(await screen.findByRole("button", { name: "Restart" }));
+
+    expect(screen.queryByText(/This scene couldn't run/)).toBeNull();
+    expect(screen.getByTitle("A spinning cube")).toBeTruthy();
+  });
+
   it("keeps the rest of the answer when the scene's code breaks its string", () => {
     const response = `root = Stack([summary, spin])
 summary = TextContent("Still here")

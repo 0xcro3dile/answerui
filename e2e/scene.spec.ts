@@ -70,6 +70,23 @@ test("keeps a scene from navigating its frame to another page", async ({ page })
   await expect(page.getByText(/This scene couldn't run: /)).toContainText("leave its sandbox");
 });
 
+test("says so when the browser drops a scene's graphics, and restarts it", async ({ page }) => {
+  await ask(page, "Show me a planet orbit");
+  const element = page.locator('iframe[title="A planet orbiting the Sun"]');
+  await expect(element).toBeAttached();
+  const frame = (await (await element.elementHandle())!.contentFrame())!;
+
+  await frame.evaluate(() => {
+    const context = document.querySelector("canvas")!.getContext("webgl2");
+    context!.getExtension("WEBGL_lose_context")!.loseContext();
+  });
+  await expect(page.getByText(/This scene couldn't run: /)).toContainText("dropped");
+  await page.getByRole("button", { name: "Restart" }).click();
+
+  await expect(element).toBeAttached();
+  await expect(page.getByText(/This scene couldn't run/)).toHaveCount(0);
+});
+
 test("still follows the slider when paused for reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await ask(page, "Show me a planet orbit");
