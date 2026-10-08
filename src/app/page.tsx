@@ -24,7 +24,7 @@ export default function Home() {
       <AgentInterface
         llm={llm}
         componentLibrary={openuiLibrary}
-        agentName="OpenUI Self Hosted"
+        agentName="AnswerUI"
         theme={{ mode }}
       />
     </div>
