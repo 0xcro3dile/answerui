@@ -26,6 +26,16 @@ It works with any OpenAI-compatible model, in the cloud or on your own machine.
 
 <p align="center"><a href=".github/assets/demo.mp4">Watch the demo in full quality</a></p>
 
+Explainers come with live 3D and 2D scenes. The answer's own sliders drive them, and the numbers they
+work out flow back into the text.
+
+<p align="center">
+  <img alt="AnswerUI answering with live 3D scenes: a wave surface, a DNA helix and the Moon's phases" src=".github/assets/scenes-3d.gif" width="49%">
+  <img alt="AnswerUI answering with live 2D animations: a pendulum, a bouncing ball and a wave" src=".github/assets/scenes-2d.gif" width="49%">
+</p>
+
+<p align="center">Answers by Kimi K3, sped up 1.2×: <a href=".github/assets/scenes-3d.mp4">3D scenes</a> · <a href=".github/assets/scenes-2d.mp4">2D animations</a></p>
+
 ## Quick start
 
 ```bash
