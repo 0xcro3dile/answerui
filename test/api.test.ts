@@ -141,7 +141,7 @@ describe("POST /api/chat", () => {
     const { error } = await response.json();
 
     expect(response.status).toBe(503);
-    expect(error).toMatch(/answerui --setup/);
+    expect(error).toMatch(/npx answerui-app --setup/);
     expect(error).toMatch(/OPENAI_API_KEY/);
     expect(error).toMatch(/Ollama/);
   });

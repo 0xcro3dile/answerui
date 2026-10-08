@@ -76,10 +76,10 @@ function applyProviderSettings() {
   if (existsSync(configFile)) {
     for (const name of PROVIDER_SETTINGS) delete process.env[name];
     Object.assign(process.env, parseEnv(readFileSync(configFile, "utf8")));
-    return `Using the model provider saved in ${configFile}. Run answerui --setup to change it.`;
+    return `Using the model provider saved in ${configFile}. Run npx answerui-app --setup to change it.`;
   }
   if (hasProviderInEnv()) return "Using the model provider from your environment.";
-  return "No model provider set, so AnswerUI will use Ollama if it's running. Run answerui --setup to choose another.";
+  return "No model provider set, so AnswerUI will use Ollama if it's running. Run npx answerui-app --setup to choose another.";
 }
 
 async function setup() {
@@ -95,7 +95,7 @@ async function setup() {
   mkdirSync(dirname(configFile), { recursive: true });
   writeFileSync(configFile, lines.join(""), { mode: 0o600 });
   chmodSync(configFile, 0o600);
-  console.log(`Saved to ${configFile}. Run answerui --setup to change it.`);
+  console.log(`Saved to ${configFile}. Run npx answerui-app --setup to change it.`);
   if (!saved.OPENAI_API_KEY && !saved.OPENAI_BASE_URL) {
     console.log("Using Ollama? Start it with OLLAMA_CONTEXT_LENGTH=16384 so the instructions fit.");
   }

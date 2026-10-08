@@ -11,7 +11,7 @@ export function untrustedRequest(request: Request): Response | null {
 
 export function setupNeeded(): Response {
   return failure(
-    "No model provider found. Run answerui --setup, set OPENAI_API_KEY (and optionally OPENAI_BASE_URL and OPENAI_MODEL), or start Ollama.",
+    "No model provider found. Run npx answerui-app --setup, set OPENAI_API_KEY (and optionally OPENAI_BASE_URL and OPENAI_MODEL), or start Ollama.",
     503,
   );
 }

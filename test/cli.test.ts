@@ -163,6 +163,7 @@ describe("answerui start", () => {
     expect(app.env.OPENAI_BASE_URL).toBe("http://localhost:1234/v1");
     expect(app.env.OPENAI_API_KEY).toBeUndefined();
     expect(app.output).toMatch(/saved in/);
+    expect(app.output).toMatch(/npx answerui-app --setup/);
   });
 
   it("uses the shell's provider settings when nothing is saved", async () => {
