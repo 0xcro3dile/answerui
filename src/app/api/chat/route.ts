@@ -11,7 +11,8 @@ export async function POST(req: Request) {
   const body = await readChatRequest(req);
   if (!body) return failure("Expected JSON with a non-empty messages array.", 400);
 
-  const provider = await findProvider();
+  const provider = await findProvider().catch((error: Error) => error);
+  if (provider instanceof Error) return failure(provider.message, 500);
   if (!provider) return setupNeeded();
 
   const model = body.model || provider.model;

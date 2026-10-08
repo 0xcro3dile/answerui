@@ -90,6 +90,23 @@ describe("POST /api/chat", () => {
     expect(fake.requests[0].model).toBe("fake-large");
   });
 
+  it("adds OPENAI_EXTRA_BODY to each request, for options like a model's fast mode", async () => {
+    useFakeProvider({ OPENAI_EXTRA_BODY: '{"thinking":{"type":"disabled"}}' });
+
+    await (await ask("Hi")).text();
+
+    expect(fake.requests[0]).toMatchObject({ thinking: { type: "disabled" }, model: "fake-small" });
+  });
+
+  it("explains a malformed OPENAI_EXTRA_BODY", async () => {
+    useFakeProvider({ OPENAI_EXTRA_BODY: "fast please" });
+
+    const response = await ask("Hi");
+
+    expect(response.status).toBe(500);
+    expect((await response.json()).error).toMatch(/OPENAI_EXTRA_BODY must be a JSON object/);
+  });
+
   it("asks for a model when none is picked or configured", async () => {
     useFakeProvider({ OPENAI_MODEL: "" });
 

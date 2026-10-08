@@ -1,4 +1,9 @@
-export type Provider = { baseURL: string; apiKey: string; model?: string };
+export type Provider = {
+  baseURL: string;
+  apiKey: string;
+  model?: string;
+  extraBody?: Record<string, unknown>;
+};
 
 export type Env = Record<string, string | undefined>;
 
@@ -14,18 +19,38 @@ export async function resolveProvider(
   const apiKey = env.OPENAI_API_KEY || undefined;
   const baseURL = env.OPENAI_BASE_URL || undefined;
   const model = env.OPENAI_MODEL || undefined;
+  const extraBody = parseExtraBody(env.OPENAI_EXTRA_BODY);
 
   if (apiKey) {
     const url = baseURL ?? OPENAI_URL;
-    return { baseURL: url, apiKey, model: model ?? defaultModel(url) };
+    return { baseURL: url, apiKey, model: model ?? defaultModel(url), extraBody };
   }
-  if (baseURL) return { baseURL, apiKey: KEYLESS, model };
+  if (baseURL) return { baseURL, apiKey: KEYLESS, model, extraBody };
 
   const ollama = ollamaURL(env.OLLAMA_HOST || "localhost");
   if (ollama && (await isReachable(`${ollama}/models`))) {
-    return { baseURL: ollama, apiKey: KEYLESS, model };
+    return { baseURL: ollama, apiKey: KEYLESS, model, extraBody };
   }
   return null;
+}
+
+function parseExtraBody(json: string | undefined): Record<string, unknown> | undefined {
+  if (!json) return undefined;
+  const value = parseJson(json);
+  if (typeof value !== "object" || value === null || Array.isArray(value)) {
+    throw new Error(
+      'OPENAI_EXTRA_BODY must be a JSON object, like {"thinking":{"type":"disabled"}}.',
+    );
+  }
+  return value as Record<string, unknown>;
+}
+
+function parseJson(json: string): unknown {
+  try {
+    return JSON.parse(json);
+  } catch {
+    return undefined;
+  }
 }
 
 function defaultModel(baseURL: string): string | undefined {
