@@ -84,7 +84,7 @@ Bigger models build better interfaces. With Ollama, start it with `OLLAMA_CONTEX
 
 AnswerUI has no telemetry. Your messages go only to the provider you choose, your key stays on
 your machine, and the app only answers requests from your own computer. Scenes the model writes run in a
-locked sandbox with no network access.
+locked sandbox: they can't reach the app or your key, and can't fetch or open web pages.
 
 ## Credits
 
