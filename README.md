@@ -6,35 +6,38 @@
 </p>
 
 <p align="center">
-  <strong>Answers you can use, not just read.</strong> Open source, any AI model.
+  <strong>Answers you can use, not just read.</strong> Open source, any AI model.<br>
+  Ask how something works and get a live 3D scene you can steer.
 </p>
 
 <p align="center">
   <a href="https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://www.npmjs.com/package/answerui-app"><img alt="npm" src="https://img.shields.io/npm/v/answerui-app"></a>
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
 </p>
 
+<p align="center">
+  <img alt="AnswerUI answering with live 3D scenes: a wave surface, a DNA helix and the Moon's phases" src=".github/assets/scenes-3d.gif" width="800">
+</p>
+
+<p align="center"><a href=".github/assets/scenes-3d.mp4">Watch in full quality</a> · answers by Kimi K3, sped up 1.2×</p>
+
 ---
 
-AnswerUI is an open-source alternative to ChatGPT's Intelligent UI. It replies with interfaces
-instead of walls of text: charts, forms, calculators and live 3D simulations you can use right in the answer.
-It works with any OpenAI-compatible model, in the cloud or on your own machine.
+AnswerUI is an open-source alternative to ChatGPT's Intelligent UI. It answers with interfaces instead of
+walls of text: charts, forms, calculators, and live 3D and 2D scenes. Move a slider and the scene changes
+instantly, and the numbers it works out flow back into the text. It works with any OpenAI-compatible model,
+in the cloud or on your own machine.
+
+**How it works:** the model streams the interface in OpenUI Lang, and each scene runs as a sandboxed code
+island, two-way bound to the answer's state.
 
 <p align="center">
-  <img alt="AnswerUI answering with a savings calculator, a dinner planner and a bill splitter" src=".github/assets/demo.gif" width="800">
-</p>
-
-<p align="center"><a href=".github/assets/demo.mp4">Watch the demo in full quality</a></p>
-
-Explainers come with live 3D and 2D scenes. The answer's own sliders drive them, and the numbers they
-work out flow back into the text.
-
-<p align="center">
-  <img alt="AnswerUI answering with live 3D scenes: a wave surface, a DNA helix and the Moon's phases" src=".github/assets/scenes-3d.gif" width="49%">
   <img alt="AnswerUI answering with live 2D animations: a pendulum, a bouncing ball and a wave" src=".github/assets/scenes-2d.gif" width="49%">
+  <img alt="AnswerUI answering with a savings calculator, a dinner planner and a bill splitter" src=".github/assets/demo.gif" width="49%">
 </p>
 
-<p align="center">Answers by Kimi K3, sped up 1.2×: <a href=".github/assets/scenes-3d.mp4">3D scenes</a> · <a href=".github/assets/scenes-2d.mp4">2D animations</a></p>
+<p align="center">In full quality: <a href=".github/assets/scenes-2d.mp4">2D animations</a> · <a href=".github/assets/demo.mp4">tools</a></p>
 
 ## Quick start
 
