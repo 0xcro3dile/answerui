@@ -23,6 +23,14 @@ describe("systemPrompt", () => {
     expect(systemPrompt).toMatch(/Input values are text/);
   });
 
+  it("steers values the user edits into bound inputs, since table edits aren't reactive", () => {
+    expect(systemPrompt).toMatch(/EditableTable edits can't feed calculations/);
+  });
+
+  it("asks for every computed number to be rounded before it's shown", () => {
+    expect(systemPrompt).toMatch(/Show every computed number through @Round/);
+  });
+
   it("explains that slider values are arrays", () => {
     expect(systemPrompt).toContain("$var[0]");
   });

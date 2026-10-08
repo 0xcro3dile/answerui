@@ -9,8 +9,9 @@ const answerRules = [
   "Slider values are arrays: read a slider bound to $var as $var[0].",
   "Input values are text, so + would join them: total them with @Sum([$a, $b]) and use -, * or / for other math.",
   "Checkbox values are true or false and count as 1 or 0 in math, so $shared.ana * price is price when Ana is checked.",
+  "EditableTable edits can't feed calculations. When results depend on values the user edits, use Input, Slider, Select, CheckBoxGroup or SwitchGroup bound to $variables.",
   "There is no power operator. For growth over time, chain values: y1 = start * rate, y2 = y1 * rate, and so on.",
-  "Round money with @Round(value, 2).",
+  "Show every computed number through @Round(value, 2), in text, tables and charts alike, so no result shows long decimals.",
 ];
 
 export const systemPrompt = generateSystemPrompt({
