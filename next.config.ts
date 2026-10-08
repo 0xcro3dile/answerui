@@ -10,7 +10,9 @@ const nextConfig: NextConfig = {
   },
   async headers() {
     const noFraming = [
-      { key: "Content-Security-Policy", value: "frame-ancestors 'none'" },
+      // frame-src 'none' keeps a scene from navigating its sandboxed frame to a web page: CSP fetch rules
+      // inside the scene don't cover navigation. Scenes load through srcdoc, which frame-src doesn't block.
+      { key: "Content-Security-Policy", value: "frame-ancestors 'none'; frame-src 'none'" },
       { key: "X-Frame-Options", value: "DENY" },
     ];
     return [{ source: "/:path*", headers: noFraming }];

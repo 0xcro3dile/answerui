@@ -50,6 +50,26 @@ test("keeps a scene away from the network, the page and storage", async ({ page 
   expect(reach).toEqual({ network: "blocked", page: "blocked", storage: "blocked" });
 });
 
+test("keeps a scene from navigating its frame to another page", async ({ page }) => {
+  await ask(page, "Show me a planet orbit");
+  const element = page.locator('iframe[title="A planet orbiting the Sun"]');
+  await expect(element).toBeAttached();
+  const frame = (await (await element.elementHandle())!.contentFrame())!;
+  const leaked = page.waitForRequest(/leak-sentinel/, { timeout: 2000 }).then(
+    () => true,
+    () => false,
+  );
+
+  await frame
+    .evaluate(() => {
+      location.href = "/leak-sentinel?values=1";
+    })
+    .catch(() => {});
+
+  expect(await leaked).toBe(false);
+  await expect(page.getByText(/This scene couldn't run: /)).toContainText("leave its sandbox");
+});
+
 test("still follows the slider when paused for reduced motion", async ({ page }) => {
   await page.emulateMedia({ reducedMotion: "reduce" });
   await ask(page, "Show me a planet orbit");

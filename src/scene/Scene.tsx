@@ -136,7 +136,15 @@ function SceneFrame({ setup, code, onReport, onError }: FrameProps) {
     sceneDocument(setup, code, `${location.origin}/scene/runtime.js`),
   );
   const [ready, setReady] = useState(false);
+  const loads = useRef(0);
   const params = JSON.stringify(setup.params);
+
+  // The frame loads its document once. Another load means the scene navigated away, which the app's
+  // frame-src policy blocks, so say what happened instead of leaving a browser error page.
+  function onLoad() {
+    loads.current += 1;
+    if (loads.current > 1) onError("The scene tried to leave its sandbox.");
+  }
 
   const receive = useEffectEvent((event: MessageEvent) => {
     if (event.source !== frame.current?.contentWindow) return;
@@ -167,6 +175,7 @@ function SceneFrame({ setup, code, onReport, onError }: FrameProps) {
       sandbox="allow-scripts"
       referrerPolicy="no-referrer"
       srcDoc={srcDoc}
+      onLoad={onLoad}
     />
   );
 }

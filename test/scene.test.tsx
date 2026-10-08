@@ -85,6 +85,16 @@ describe("Scene", () => {
     );
   });
 
+  it("replaces a scene that navigates away from its document with a notice", async () => {
+    const frame = renderAnswer()!;
+    expect(frame).not.toBeNull();
+
+    fireEvent.load(frame);
+    fireEvent.load(frame);
+
+    expect(await screen.findByText(/This scene couldn't run: .*leave its sandbox/)).toBeTruthy();
+  });
+
   it("starts paused when the user prefers reduced motion", () => {
     vi.spyOn(window, "matchMedia").mockImplementation(
       (query) =>
