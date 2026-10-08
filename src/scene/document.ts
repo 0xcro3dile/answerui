@@ -18,9 +18,9 @@ export function sceneDocument(setup: SceneSetup, code: string, runtimeUrl: strin
 <meta http-equiv="Content-Security-Policy" content="${policy}">
 <style>html,body{margin:0;height:100%;overflow:hidden;background:transparent}</style>
 <script src="${runtimeUrl}"></script>
-<script>AnswerUIScene.setup(${embed(setup)})</script>
 </head>
 <body>
+<script>AnswerUIScene.setup(${embed(setup)})</script>
 <script>
 ${escapeScript(code)}
 </script>

@@ -37,6 +37,12 @@ describe("sceneDocument", () => {
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
   });
 
+  it("runs the setup once the body exists, so the stage can attach to it", () => {
+    const html = sceneDocument(setup, "", runtime);
+
+    expect(html.indexOf("<body>")).toBeLessThan(html.indexOf("AnswerUIScene.setup("));
+  });
+
   it("keeps the model's code inside its script element", () => {
     const html = sceneDocument(
       setup,
