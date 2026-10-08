@@ -70,7 +70,7 @@ test("keeps a scene from navigating its frame to another page", async ({ page })
 
   await frame
     .evaluate(() => {
-      location.href = "/leak-sentinel?values=1";
+      location.href = new URL("/leak-sentinel?values=1", document.baseURI).href;
     })
     .catch(() => {});
 
