@@ -11,6 +11,10 @@ const fixtureByKeyword: [RegExp, string][] = [
   [/bill|split/i, "bill-splitter"],
   [/sav(e|ings)|retire/i, "savings"],
   [/roast/i, "roast-planner"],
+  [/orbit|planet/i, "orbit"],
+  [/pendulum/i, "pendulum"],
+  [/spinning cube/i, "broken-scene"],
+  [/bouncing ball/i, "scene-typo"],
 ];
 
 export function fixture(name: string): string {

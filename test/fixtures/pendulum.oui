@@ -1,0 +1,27 @@
+$length = [2]
+$sim = {period: 2.84}
+root = Stack([intro, lengthField, period, swing])
+intro = TextContent("A longer pendulum swings more slowly.")
+lengthField = FormControl("Length (m)", Slider("length", "continuous", 0.5, 4, 0.1, [2], "Length", null, $length))
+period = TextContent("Seconds per swing: " + @Round($sim.period, 2))
+swing = Scene("A swinging pendulum", "2d", "
+  onFrame((t) => {
+    const length = params.length;
+    const period = 2 * Math.PI * Math.sqrt(length / 9.81);
+    report({ period: period });
+    const angle = 0.5 * Math.cos((2 * Math.PI * t) / period);
+    const x = 400 + Math.sin(angle) * length * 90;
+    const y = 40 + Math.cos(angle) * length * 90;
+    ctx.clearRect(0, 0, 800, 450);
+    ctx.strokeStyle = theme.text;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(400, 40);
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.fillStyle = theme.accent;
+    ctx.beginPath();
+    ctx.arc(x, y, 18, 0, 2 * Math.PI);
+    ctx.fill();
+  });
+", {length: $length[0]}, $sim)

@@ -17,7 +17,7 @@
 ---
 
 AnswerUI is an open-source alternative to ChatGPT's Intelligent UI. It replies with interfaces
-instead of walls of text: charts, forms, tables and calculators you can use right in the answer.
+instead of walls of text: charts, forms, calculators and live 3D simulations you can use right in the answer.
 It works with any OpenAI-compatible model, in the cloud or on your own machine.
 
 <p align="center">
@@ -83,11 +83,15 @@ Bigger models build better interfaces. With Ollama, start it with `OLLAMA_CONTEX
 ## Privacy
 
 AnswerUI has no telemetry. Your messages go only to the provider you choose, your key stays on
-your machine, and the app only answers requests from your own computer.
+your machine, and the app only answers requests from your own computer. Scenes the model writes run in a
+locked sandbox with no network access.
 
 ## Credits
 
-Built on [OpenUI](https://github.com/thesysdev/openui) (MIT). Not affiliated with OpenAI.
+Built on [OpenUI](https://github.com/thesysdev/openui) (MIT). Scenes use [three.js](https://threejs.org) (MIT)
+and adapt ideas from OpenUI's html-artifact example,
+[OpenGenerativeUI](https://github.com/CopilotKit/OpenGenerativeUI) and three.js's llms.txt (all MIT). Not
+affiliated with OpenAI.
 
 ## License
 
