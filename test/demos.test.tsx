@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { createParser, type LibraryJSONSchema } from "@openuidev/lang-core";
 import { Renderer } from "@openuidev/react-lang";
-import { openuiLibrary } from "@openuidev/react-ui/genui-lib";
+import { library } from "@/lib/library";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import spec from "@/generated/spec.json";
@@ -21,7 +21,7 @@ describe.each(["plain", "bill-splitter", "savings", "roast-planner"])("%s answer
 });
 
 function renderAnswer(name: string) {
-  render(<Renderer response={fixture(name)} library={openuiLibrary} />);
+  render(<Renderer response={fixture(name)} library={library} />);
 }
 
 function nudgeSlider(currentValue: number) {
