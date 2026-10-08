@@ -7,6 +7,7 @@ const answerRules = [
   "Build an interactive tool when the user would adjust numbers, compare options, plan with inputs or explore data.",
   "In a tool, put the inputs first, bind each to a $variable, and compute every result from those variables so it updates live.",
   "Slider values are arrays: read a slider bound to $var as $var[0].",
+  "Slider steps must be whole numbers, because a continuous slider rounds smaller steps up to 1. Pick units that make them whole, like centimeters instead of meters.",
   "Input values are text, so + would join them: total them with @Sum([$a, $b]) and use -, * or / for other math.",
   "Checkbox values are true or false and count as 1 or 0 in math, so $shared.ana * price is price when Ana is checked.",
   "EditableTable edits can't feed calculations. When results depend on values the user edits, use Input, Slider, Select, CheckBoxGroup or SwitchGroup bound to $variables.",
@@ -26,7 +27,7 @@ export const sceneExample = `$distance = [1]
 $sim = {period: 1}
 root = Stack([intro, distanceField, period, orbit])
 intro = TextContent("Planets farther from the Sun take longer to go around it. Drag the slider to move the planet.")
-distanceField = FormControl("Distance from the Sun (AU)", Slider("distance", "continuous", 0.5, 3.5, 0.1, [1], "Distance", null, $distance))
+distanceField = FormControl("Distance from the Sun (AU)", Slider("distance", "continuous", 1, 5, 1, [1], "Distance", null, $distance))
 period = TextContent("Years per orbit: " + @Round($sim.period, 2))
 orbit = Scene("A planet orbiting the Sun", "3d", "
   const sun = new THREE.Mesh(new THREE.SphereGeometry(0.6, 32, 16), new THREE.MeshBasicMaterial({ color: 'gold' }));
@@ -38,7 +39,7 @@ orbit = Scene("A planet orbiting the Sun", "3d", "
     const years = Math.sqrt(params.distance ** 3);
     report({ period: years });
     angle += (dt * 2 * Math.PI) / (years * 4);
-    const r = params.distance * 2;
+    const r = params.distance * 1.6;
     planet.position.set(Math.cos(angle) * r, 0, Math.sin(angle) * r);
   });
 ", {distance: $distance[0]}, $sim)`;

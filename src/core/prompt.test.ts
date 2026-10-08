@@ -35,6 +35,11 @@ describe("systemPrompt", () => {
     expect(systemPrompt).toContain("$var[0]");
   });
 
+  it("asks for whole-number slider steps, since continuous sliders round smaller ones up to 1", () => {
+    expect(systemPrompt).toMatch(/Slider steps must be whole numbers/);
+    expect(sceneExample).not.toMatch(/Slider\([^)]*"continuous", [\d.]+, [\d.]+, 0\./);
+  });
+
   it("offers Scene for 3D, motion and simulations, with a working example", () => {
     expect(systemPrompt).toContain("Scene(");
     expect(systemPrompt).toContain('orbit = Scene("A planet orbiting the Sun", "3d"');
