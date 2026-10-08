@@ -1,60 +1,94 @@
-This is an [OpenUI](https://openui.com) Self Hosted Chat project bootstrapped with [`openui-cli`](https://openui.com/docs/chat/quick-start).
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.png">
+    <img alt="AnswerUI" src=".github/assets/logo-light.png" width="420">
+  </picture>
+</p>
 
-## Setup
+<p align="center">
+  <strong>Answers you can use, not just read.</strong> Open source, any AI model.
+</p>
 
-Create `.env.local` with your OpenAI credentials:
+<p align="center">
+  <a href="https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/0xcro3dile/answerui/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-blue.svg"></a>
+</p>
+
+---
+
+AnswerUI is a chat app that replies with interfaces instead of walls of text: charts, forms, tables
+and calculators you can use right in the answer. It works with any OpenAI-compatible model, in the
+cloud or on your own machine.
+
+<p align="center">
+  <img alt="AnswerUI answering with a savings calculator, a dinner planner and a bill splitter" src=".github/assets/demo.gif" width="800">
+</p>
+
+<p align="center"><a href=".github/assets/demo.mp4">Watch the demo in full quality</a></p>
+
+## Quick start
 
 ```bash
-OPENAI_API_KEY=...
-# Optional:
-OPENAI_MODEL=gpt-5.2
+npx answerui
 ```
 
-## Getting Started
+The first run asks for your API key. Press Enter instead to use a local model with
+[Ollama](https://ollama.com).
 
-First, run the development server:
+<details>
+<summary>Docker</summary>
 
 ```bash
+docker run -p 127.0.0.1:3000:3000 --env-file .env ghcr.io/0xcro3dile/answerui
+```
+
+</details>
+
+<details>
+<summary>From source</summary>
+
+```bash
+git clone https://github.com/0xcro3dile/answerui.git
+cd answerui
+pnpm install
 pnpm dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+</details>
 
-You can start editing the page by modifying `src/app/api/chat/route.ts` and improving your agent
-by adding system prompts or tools. A LangGraph scaffold puts the
-implementation in `src/agent/agent.ts` instead.
+## Models
 
-The generated app includes a `get_weather` tool example. Ask “What’s the weather in Berlin?” to exercise its native tool loop.
+Set these in your environment, or save them with `npx answerui --setup`:
 
-## Deploy
+| Variable                 | What it does                                                           |
+| ------------------------ | ---------------------------------------------------------------------- |
+| `OPENAI_API_KEY`         | Your API key                                                           |
+| `OPENAI_BASE_URL`        | Your provider's API address (default: OpenAI)                          |
+| `OPENAI_MODEL`           | The model to use                                                       |
+| `OPENAI_EXTRA_BODY`      | Extra JSON sent with each request, e.g. to turn off a model's thinking |
+| `OLLAMA_HOST`            | Where Ollama runs (default: `localhost`)                               |
+| `ANSWERUI_ALLOWED_HOSTS` | Extra hostnames to serve, for example behind a proxy                   |
 
-From the project directory, deploy a preview with the pinned OpenUI CLI:
+| Provider        | `OPENAI_BASE_URL`                |
+| --------------- | -------------------------------- |
+| OpenAI          | leave empty                      |
+| OpenRouter      | `https://openrouter.ai/api/v1`   |
+| Kimi (Moonshot) | `https://api.moonshot.ai/v1`     |
+| Groq            | `https://api.groq.com/openai/v1` |
+| LM Studio       | `http://localhost:1234/v1`       |
+| Ollama          | leave everything empty           |
 
-```bash
-pnpm run deploy
-pnpm run deploy -- --prod
-```
+Bigger models build better interfaces. With Ollama, start it with `OLLAMA_CONTEXT_LENGTH=16384`.
 
-The command deploys to Vercel. Allowlisted keys from `.env` / `.env.local` (including `OPENAI_API_KEY`)
-are passed to that deployment unless you use `--skip-env`. Persist them on the Vercel project for later
-deploys.
+## Privacy
 
-## Framework deployments
+AnswerUI has no telemetry. Your messages go only to the provider you choose, your key stays on
+your machine, and the app only answers requests from your own computer.
 
-The Vercel AI SDK scaffold runs its backend inside the Next.js API route, so the
-frontend and backend can be deployed together as one Next.js project.
+## Credits
 
-## Conversation storage
+Built on [OpenUI](https://github.com/thesysdev/openui) (MIT). Not affiliated with OpenAI.
 
-This starter does not configure durable conversation storage. `AgentInterface`
-keeps messages in memory for the current page session and sends that history to
-`/api/chat`; refreshing the page loses it. To persist conversations, pass a storage
-implementation to `AgentInterface` and back it with your own database. Add a
-LangGraph checkpointer separately only for graph-specific durable state.
+## License
 
-## Learn More
-
-To learn more about OpenUI, take a look at the following resources:
-
-- [OpenUI Documentation](https://openui.com/docs) - learn about OpenUI features and API.
-- [OpenUI GitHub repository](https://github.com/thesysdev/openui) - your feedback and contributions are welcome!
+[MIT](LICENSE)
