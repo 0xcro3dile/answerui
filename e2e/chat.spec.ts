@@ -27,3 +27,9 @@ test("shows the provider's error instead of an empty answer", async ({ page }) =
 
   await expect(page.getByText(/The model rejected this request/)).toBeVisible();
 });
+
+test("keeps a slider's default when the model writes root before its state", async ({ page }) => {
+  await ask(page, "Pick a level");
+
+  await expect(page.getByText("Level: 3")).toBeVisible();
+});

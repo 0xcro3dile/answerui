@@ -1,0 +1,5 @@
+root = Stack([intro, level, readout])
+$level = [3]
+intro = TextContent("Pick a level.")
+level = Slider("level", "continuous", 1, 5, 1, [3], "Level", null, $level)
+readout = TextContent("Level: " + $level[0])

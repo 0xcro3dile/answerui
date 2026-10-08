@@ -16,7 +16,11 @@ const fixtureByKeyword: [RegExp, string][] = [
   [/spinning cube/i, "broken-scene"],
   [/bouncing ball/i, "scene-typo"],
   [/scene of its own/i, "own-scene"],
+  [/pick a level/i, "root-first"],
 ];
+
+// Streamed with pauses like a real model, so the app renders the answer while it's still partial.
+const PAUSED_FIXTURES = new Set(["root-first"]);
 
 export function fixture(name: string): string {
   return readFileSync(join(import.meta.dirname, "fixtures", `${name}.oui`), "utf8");
@@ -39,7 +43,8 @@ export async function startFakeOpenAI(port = 0) {
       if (REJECTED_QUESTION.test(lastQuestion(body))) {
         return sendJson(res, 400, { error: { message: "The model rejected this request" } });
       }
-      return streamAnswer(res, fixture(pickFixture(body)));
+      const name = pickFixture(body);
+      return streamAnswer(res, fixture(name), PAUSED_FIXTURES.has(name) ? 40 : 0);
     }
     sendJson(res, 404, { error: { message: "Not found" } });
   });
@@ -61,9 +66,10 @@ function pickFixture(request: ChatRequest): string {
   return fixtureByKeyword.find(([pattern]) => pattern.test(question))?.[1] ?? "plain";
 }
 
-function streamAnswer(res: ServerResponse, answer: string) {
+async function streamAnswer(res: ServerResponse, answer: string, pauseMs: number) {
   res.writeHead(200, { "Content-Type": "text/event-stream" });
   for (const piece of answer.match(/[\s\S]{1,24}/g) ?? []) {
+    if (pauseMs) await new Promise((resolve) => setTimeout(resolve, pauseMs));
     const chunk = { id: "fake", object: "chat.completion.chunk", created: 0, model: "fake" };
     const choices = [{ index: 0, delta: { content: piece }, finish_reason: null }];
     res.write(`data: ${JSON.stringify({ ...chunk, choices })}\n\n`);
