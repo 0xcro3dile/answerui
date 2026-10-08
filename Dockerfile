@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM node:24-alpine AS build
+FROM --platform=$BUILDPLATFORM node:24-alpine AS build
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1 OPENUI_TELEMETRY_DISABLED=1 DO_NOT_TRACK=1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
