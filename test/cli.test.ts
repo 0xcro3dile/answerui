@@ -28,10 +28,21 @@ if (!process.env.STUB_NEVER_LISTENS) {
 const running: ChildProcess[] = [];
 const blockers: Server[] = [];
 
-afterEach(() => {
-  running.splice(0).forEach((child) => child.kill());
-  blockers.splice(0).forEach((server) => server.close());
+// Wait for each app and blocker to let go of its port, so the next test finds the ports it expects.
+afterEach(async () => {
+  await Promise.all(running.splice(0).map(stop));
+  await Promise.all(
+    blockers.splice(0).map((server) => new Promise((resolve) => server.close(resolve))),
+  );
 });
+
+function stop(child: ChildProcess): Promise<void> {
+  if (child.exitCode !== null || child.signalCode !== null) return Promise.resolve();
+  return new Promise((resolve) => {
+    child.once("exit", () => resolve());
+    child.kill();
+  });
+}
 
 function installApp() {
   const root = mkdtempSync(join(tmpdir(), "answerui-app-"));
