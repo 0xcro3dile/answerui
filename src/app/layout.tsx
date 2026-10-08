@@ -7,8 +7,8 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "OpenUI Self Hosted",
-  description: "Generative UI Chat with OpenAI SDK",
+  title: "AnswerUI",
+  description: "Answers you can use, not just read. Open source, any AI model.",
 };
 
 export default function RootLayout({
